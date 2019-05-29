@@ -78,7 +78,7 @@ public class UserMealsUtil {
                 }) ;
 
         mealList.stream()
-                .filter(userMeal -> userMeal.getDateTime().toLocalTime().isAfter(startTime) && userMeal.getDateTime().toLocalTime().isBefore(endTime))
+                .filter(userMeal -> TimeUtil.isBetween(userMeal.getDateTime().toLocalTime(), startTime, endTime))
                 .forEach(userMeal -> {
                     if (map.get(userMeal.getDateTime().toLocalDate()) > caloriesPerDay) {
                         mealWithExceedList.add(new UserMealWithExceed(userMeal.getDateTime(), userMeal.getDescription(), userMeal.getCalories(), true));
