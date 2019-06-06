@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.Month;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class UserMealsUtil {
@@ -53,9 +54,9 @@ public class UserMealsUtil {
 
             if (mealLocalTime.isAfter(startTime) && mealLocalTime.isBefore(endTime)) {
                 if (caloriesOfTheDay > caloriesPerDay) {
-                    mealWithExceedList.add(new UserMealWithExceed(mealLocalDateTime, mealDescription, mealCalories, true));
+                    mealWithExceedList.add(new UserMealWithExceed(mealLocalDateTime, mealDescription, mealCalories, new AtomicBoolean(true)));
                 } else {
-                    mealWithExceedList.add(new UserMealWithExceed(mealLocalDateTime, mealDescription, mealCalories, false));
+                    mealWithExceedList.add(new UserMealWithExceed(mealLocalDateTime, mealDescription, mealCalories, new AtomicBoolean(false)));
                 }
             }
 
@@ -64,31 +65,76 @@ public class UserMealsUtil {
     }
 
     public static List<UserMealWithExceed>  getFilteredWithExceededStreamAPI(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
-        List<UserMealWithExceed> mealWithExceedList = new ArrayList<>();
-        Map<LocalDate, Integer> map = new HashMap<>();
+        Map<LocalDate, Integer> mealsByDate = new HashMap<>();
 
         mealList.stream()
-                .forEach(userMeal -> {
-                    if (!map.containsKey(userMeal.getDateTime().toLocalDate())) {
-                        map.put(userMeal.getDateTime().toLocalDate(), userMeal.getCalories());
-                    } else {
-                        int oldCalories = map.get(userMeal.getDateTime().toLocalDate());
-                        map.put(userMeal.getDateTime().toLocalDate(), oldCalories + userMeal.getCalories());
-                    }
-                }) ;
+                .forEach(userMeal -> mealsByDate.merge(userMeal.getDateTime().toLocalDate(), userMeal.getCalories(), Integer::sum)); // последний аргумент показывает, что делать для одинаковых ключей
+
+        List<UserMealWithExceed> mealsWithExceedList = new ArrayList<>();
 
         mealList.stream()
                 .filter(userMeal -> TimeUtil.isBetween(userMeal.getDateTime().toLocalTime(), startTime, endTime))
                 .forEach(userMeal -> {
-                    if (map.get(userMeal.getDateTime().toLocalDate()) > caloriesPerDay) {
-                        mealWithExceedList.add(new UserMealWithExceed(userMeal.getDateTime(), userMeal.getDescription(), userMeal.getCalories(), true));
+                    if (mealsByDate.get(userMeal.getDateTime().toLocalDate()) > caloriesPerDay) {
+                        mealsWithExceedList.add(new UserMealWithExceed(userMeal.getDateTime(), userMeal.getDescription(), userMeal.getCalories(), new AtomicBoolean(true)));
                     } else {
-                        mealWithExceedList.add(new UserMealWithExceed(userMeal.getDateTime(), userMeal.getDescription(), userMeal.getCalories(), false));
+                        mealsWithExceedList.add(new UserMealWithExceed(userMeal.getDateTime(), userMeal.getDescription(), userMeal.getCalories(), new AtomicBoolean(false)));
                     }
                 });
 
-
-        return mealWithExceedList;
+        return mealsWithExceedList;
     }
 
+    @SuppressWarnings("Duplicates")
+    public static List<UserMealWithExceed>  getFilteredWithExceededOneCycle(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
+        List<UserMealWithExceed> mealsWithExceedList = new ArrayList<>();
+        Map<LocalDate, List<Object>> mealsByDate = new HashMap<>();
+
+        for(UserMeal userMeal : mealList) {
+
+            int mealCalories = userMeal.getCalories();
+            String mealDescription = userMeal.getDescription();
+            LocalDateTime mealLocalDateTime = userMeal.getDateTime();
+
+            LocalDate mealLocalDate = mealLocalDateTime.toLocalDate();
+            LocalTime mealLocalTime = mealLocalDateTime.toLocalTime();
+
+            if (!mealsByDate.containsKey(mealLocalDate)) {
+                List<Object> innerList = new ArrayList<>(2);
+                if (mealCalories < caloriesPerDay) {
+                    innerList.add(new AtomicBoolean(false));
+                    innerList.add(mealCalories);
+                }
+                else {
+                    innerList.add(new AtomicBoolean(true));
+                    innerList.add(mealCalories);
+                }
+                mealsByDate.put(mealLocalDate, innerList);
+            } else {
+                int oldCalories = (Integer) mealsByDate.get(mealLocalDate).get(1);
+                int totalCalories = oldCalories + mealCalories;
+                List<Object> list = mealsByDate.get(mealLocalDate);
+                if (totalCalories > 2000) {
+                    AtomicBoolean atomicBoolean = (AtomicBoolean) list.get(0);
+                    atomicBoolean.set(true);
+                    list.set(0, atomicBoolean);
+                } else {
+                    AtomicBoolean atomicBoolean = (AtomicBoolean) list.get(0);
+                    atomicBoolean.set(false);
+                    list.set(0, atomicBoolean);
+                }
+                list.set(1, totalCalories);
+                mealsByDate.put(mealLocalDate, list);
+            }
+
+            AtomicBoolean atomicBoolean = (AtomicBoolean) mealsByDate.get(mealLocalDate).get(0);
+
+            if (mealLocalTime.isAfter(startTime) && mealLocalTime.isBefore(endTime)) {
+                mealsWithExceedList.add(new UserMealWithExceed(mealLocalDateTime, mealDescription, mealCalories, atomicBoolean));
+            }
+        }
+        return mealsWithExceedList;
     }
+
+
+}
