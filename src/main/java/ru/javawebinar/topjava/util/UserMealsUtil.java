@@ -27,11 +27,10 @@ public class UserMealsUtil {
             System.out.println(userMealWithExceed.toString());
         }
 
-//        .toLocalDate();
-//        .toLocalTime();
     }
 
-    public static List<UserMealWithExceed>  getFilteredWithExceeded(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
+    public static List<UserMealWithExceed>  getFilteredWithExceeded(List<UserMeal> mealList, LocalTime startTime,
+                                                                    LocalTime endTime, int caloriesPerDay) {
         List<UserMealWithExceed> mealWithExceedList = new ArrayList<>();
         Map<LocalDate, Integer> map = new HashMap<>();
         for (UserMeal userMeal : mealList) {
@@ -53,40 +52,38 @@ public class UserMealsUtil {
             int caloriesOfTheDay = map.get(mealLocalDate);
 
             if (mealLocalTime.isAfter(startTime) && mealLocalTime.isBefore(endTime)) {
-                if (caloriesOfTheDay > caloriesPerDay) {
-                    mealWithExceedList.add(new UserMealWithExceed(mealLocalDateTime, mealDescription, mealCalories, new AtomicBoolean(true)));
-                } else {
-                    mealWithExceedList.add(new UserMealWithExceed(mealLocalDateTime, mealDescription, mealCalories, new AtomicBoolean(false)));
-                }
+                    mealWithExceedList.add(new UserMealWithExceed(mealLocalDateTime, mealDescription, mealCalories,
+                            new AtomicBoolean(caloriesOfTheDay > caloriesPerDay)));
             }
 
         }
         return mealWithExceedList;
     }
 
-    public static List<UserMealWithExceed>  getFilteredWithExceededStreamAPI(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
+    public static List<UserMealWithExceed>  getFilteredWithExceededStreamAPI(List<UserMeal> mealList, LocalTime startTime,
+                                                                             LocalTime endTime, int caloriesPerDay) {
         Map<LocalDate, Integer> mealsByDate = new HashMap<>();
 
         mealList.stream()
-                .forEach(userMeal -> mealsByDate.merge(userMeal.getDateTime().toLocalDate(), userMeal.getCalories(), Integer::sum)); // последний аргумент показывает, что делать для одинаковых ключей
+                .forEach(userMeal -> mealsByDate.merge(userMeal.getDateTime().toLocalDate(), userMeal.getCalories(),
+                        Integer::sum)); // последний аргумент показывает, что делать для одинаковых ключей
 
         List<UserMealWithExceed> mealsWithExceedList = new ArrayList<>();
 
         mealList.stream()
                 .filter(userMeal -> TimeUtil.isBetween(userMeal.getDateTime().toLocalTime(), startTime, endTime))
                 .forEach(userMeal -> {
-                    if (mealsByDate.get(userMeal.getDateTime().toLocalDate()) > caloriesPerDay) {
-                        mealsWithExceedList.add(new UserMealWithExceed(userMeal.getDateTime(), userMeal.getDescription(), userMeal.getCalories(), new AtomicBoolean(true)));
-                    } else {
-                        mealsWithExceedList.add(new UserMealWithExceed(userMeal.getDateTime(), userMeal.getDescription(), userMeal.getCalories(), new AtomicBoolean(false)));
-                    }
+                    mealsWithExceedList.add(new UserMealWithExceed(userMeal.getDateTime(), userMeal.getDescription(),
+                                userMeal.getCalories(),
+                            new AtomicBoolean(mealsByDate.get(userMeal.getDateTime().toLocalDate()) > caloriesPerDay)));
                 });
 
         return mealsWithExceedList;
     }
 
     @SuppressWarnings("Duplicates")
-    public static List<UserMealWithExceed>  getFilteredWithExceededOneCycle(List<UserMeal> mealList, LocalTime startTime, LocalTime endTime, int caloriesPerDay) {
+    public static List<UserMealWithExceed>  getFilteredWithExceededOneCycle(List<UserMeal> mealList, LocalTime startTime,
+                                                                            LocalTime endTime, int caloriesPerDay) {
         List<UserMealWithExceed> mealsWithExceedList = new ArrayList<>();
         Map<LocalDate, List<Object>> mealsByDate = new HashMap<>();
 
