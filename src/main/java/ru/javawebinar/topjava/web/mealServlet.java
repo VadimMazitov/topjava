@@ -14,6 +14,8 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -28,14 +30,20 @@ public class mealServlet extends HttpServlet {
 
     private static final MealDAO mealDAO;
 
+    private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
+
     static {
         mealDAO = new MealDAOImpl();
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String description = request.getParameter("description");
+        String description = "";
+        try {
+            description = decodeGetParameter(request.getParameter("description"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
         int calories = Integer.parseInt(request.getParameter("calories"));
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm");
         LocalDateTime dateTime = LocalDateTime.parse(request.getParameter("dateTime"), formatter);
         String id = request.getParameter("id");
 
@@ -84,6 +92,10 @@ public class mealServlet extends HttpServlet {
         }
 
         request.getRequestDispatcher(page).forward(request, response);
+    }
+
+    public static String decodeGetParameter(String parameter) throws UnsupportedEncodingException {
+        return new String(parameter.getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
     }
 
 }

@@ -30,15 +30,15 @@
         <c:if test="${not meal.excess}">
             <c:set var="excess" value="GREEN"/>
         </c:if>
-            <tr>
-                <td style="color: ${excess}">${meal.id}</td>
-                <td style="color: ${excess}">${meal.description}</td>
-                <td style="color: ${excess}">${meal.calories}</td>
+            <tr style="color: ${excess}">
+                <td>${meal.id}</td>
+                <td>${meal.description}</td>
+                <td>${meal.calories}</td>
                 <fmt:parseDate value="${meal.dateTime}" pattern="yyyy-MM-dd'T'HH:mm" var="parsedDateTime" type="both" />
                 <fmt:formatDate pattern="dd.MM.yyyy HH:mm" value="${parsedDateTime}" var="date"/>
-                <td style="color: ${excess}">${date}</td>
-                <td style="color: ${excess}"><a href="meals?action=update&id=<c:out value="${meal.id}"/>">Update</a></td>
-                <td style="color: ${excess}"><a href="meals?action=delete&id=<c:out value="${meal.id}"/>">Delete</a></td>
+                <td>${date}</td>
+                <td><a href="meals?action=update&id=<c:out value="${meal.id}"/>">Update</a></td>
+                <td><a href="meals?action=delete&id=<c:out value="${meal.id}"/>">Delete</a></td>
             </tr>
     </c:forEach>
     </c:if>
