@@ -37,13 +37,10 @@ public class MealRestController {
                 SecurityUtil.authUserCaloriesPerDay());
     }
 
-    public MealTo get(int id, LocalDate startDate, LocalDate endDate, LocalTime startTime, LocalTime endTime) {
+    public Meal get(int id) {
         log.info("get {}", id);
         try {
-            Meal meal = service.get(id, SecurityUtil.authUserId(), startDate, endDate);
-            List<MealTo> all = getAll();
-            boolean excess = all.stream().filter(mealTo -> mealTo.getId() == meal.getId()).findFirst().get().isExcess();
-            return MealsUtil.createWithExcess(meal, excess);
+            return service.get(id, SecurityUtil.authUserId());
         } catch (NotFoundException e) {
             log.error(e.getMessage());
             return null;

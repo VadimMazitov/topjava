@@ -42,7 +42,7 @@ public class MealServiceImpl implements MealService {
     }
 
     @Override
-    public Meal get(int id, int userID, LocalDate startDate, LocalDate endDate) throws NotFoundException {
-        return checkNotFoundWithId(repository.get(id, userID, startDate, endDate), id);
+    public Meal get(int id, int userID) throws NotFoundException {
+        return checkNotFoundWithId(repository.get(id, userID), id);
     }
 }

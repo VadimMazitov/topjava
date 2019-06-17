@@ -12,7 +12,7 @@ public interface MealRepository {
     boolean delete(int id, int userID);
 
     // null if not found
-    Meal get(int id, int userID, LocalDate startDate, LocalDate endDate);
+    Meal get(int id, int userID);
 
     Collection<Meal> getAll(int userID, LocalDate startDate, LocalDate endDate);
 }

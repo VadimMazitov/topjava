@@ -25,7 +25,6 @@ public class SpringMain {
             MealRestController mealRestController = appCtx.getBean(MealRestController.class);
             mealRestController.create(new Meal(null, LocalDateTime.now(), "myMeal", 777, 1));
             mealRestController.getAll().stream().forEach(System.out::println);
-            System.out.println(mealRestController.get(4, LocalDate.MIN, LocalDate.MAX, LocalTime.MIN, LocalTime.MAX));
             SecurityUtil.id = 1;
             mealRestController.delete(4);
             mealRestController.delete(7);

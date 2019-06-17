@@ -53,12 +53,12 @@ public class InMemoryMealRepositoryImpl implements MealRepository {
     }
 
     @Override
-    public Meal get(int id, int userID, LocalDate startDate, LocalDate endDate) {
+    public Meal get(int id, int userID) {
         log.info("get {}", id);
         Meal meal = null;
         if (repository.get(id) != null) {
             meal = repository.get(id);
-            if (meal.getUserID() == userID && DateTimeUtil.isBetweenDate(meal.getDate(), startDate, endDate))
+            if (meal.getUserID() == userID)
                 return meal;
         }
         return null;
