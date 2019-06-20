@@ -5,7 +5,8 @@ import ru.javawebinar.topjava.model.Meal;
 import java.util.Collection;
 
 public interface MealRepository {
-    Meal save(Meal meal);
+    // null if updated meal do not belong to userId
+    Meal save(Meal meal, int userId);
 
     // false if not found
     boolean delete(int id);
