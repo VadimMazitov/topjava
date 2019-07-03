@@ -9,6 +9,7 @@ import ru.javawebinar.topjava.repository.MealRepository;
 
 import javax.jws.soap.SOAPBinding;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 import java.time.LocalDateTime;
@@ -24,16 +25,20 @@ public class JpaMealRepository implements MealRepository {
     @Override
     @Transactional
     public Meal save(Meal meal, int userId) {
-        User user = em.find(User.class, userId);
-        if (user != null) {
+        User userOfId = em.find(User.class, userId);
+//        User userOfMeal = (User) em.createQuery("SELECT u FROM User u JOIN FETCH u.WHERE ").getSingleResult();
+        meal.setUser(userOfId);
+        if (userOfId != null) {
             if (meal.isNew()) {
-                meal.setUser(user);
                 em.persist(meal);
                 return meal;
             } else {
-                if (meal.getUser().equals(user)) {
+                Meal mealToMerge = get(meal.getId(), userId);
+                User userOfMeal = mealToMerge != null ? mealToMerge.getUser() : null;
+                if (userOfMeal != null && userOfMeal.equals(userOfId))
                     return em.merge(meal);
-                }
+                else
+                    return null;
             }
         }
         return null;
@@ -50,8 +55,9 @@ public class JpaMealRepository implements MealRepository {
 //        }
 //        return false;
         User u = em.getReference(User.class, userId);
-        return em.createNamedQuery(Meal.DELETE, Meal.class)
+        return em.createNamedQuery(Meal.DELETE)
                 .setParameter("user", u)
+                .setParameter("id", id)
                 .executeUpdate() != 0;
     }
 
@@ -59,22 +65,28 @@ public class JpaMealRepository implements MealRepository {
     public Meal get(int id, int userId) {
         User u = em.getReference(User.class, userId);
         Query query = em.createQuery("SELECT m FROM Meal m where m.id=:id and m.user=:user");
-        return (Meal) query.setParameter("id", id)
-                .setParameter("user", u)
-                .getSingleResult();
+        try {
+            return (Meal) query.setParameter("id", id)
+                    .setParameter("user", u)
+                    .getSingleResult();
+        } catch (NoResultException e) {
+            return null;
+        }
     }
 
     @Override
     public List<Meal> getAll(int userId) {
-        return em.createNamedQuery(Meal.ALL_SORTED, Meal.class).getResultList();
+//        User user = em.find(User.class, userId);
+        return em.createNamedQuery(Meal.ALL_SORTED, Meal.class)
+                .setParameter("userID", userId)
+                .getResultList();
     }
 
     @Override
     public List<Meal> getBetween(LocalDateTime startDate, LocalDateTime endDate, int userId) {
-        User u = em.getReference(User.class, userId);
-
+//        User u = em.getReference(User.class, userId);
         return em.createNamedQuery(Meal.ALL_SORTED_BETWEEN, Meal.class)
-                .setParameter("user", u)
+                .setParameter("userID", userId)
                 .setParameter("startDate", startDate)
                 .setParameter("endDate", endDate)
                 .getResultList();
