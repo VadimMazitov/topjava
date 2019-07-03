@@ -25,7 +25,7 @@ public class JpaMealRepository implements MealRepository {
     @Override
     @Transactional
     public Meal save(Meal meal, int userId) {
-        User userOfId = em.find(User.class, userId);
+        User userOfId = em.getReference(User.class, userId);
 //        User userOfMeal = (User) em.createQuery("SELECT u FROM User u JOIN FETCH u.WHERE ").getSingleResult();
         meal.setUser(userOfId);
         if (userOfId != null) {
@@ -35,7 +35,7 @@ public class JpaMealRepository implements MealRepository {
             } else {
                 Meal mealToMerge = get(meal.getId(), userId);
                 User userOfMeal = mealToMerge != null ? mealToMerge.getUser() : null;
-                if (userOfMeal != null && userOfMeal.equals(userOfId))
+                if (userOfMeal != null && userOfMeal.getId().equals(userOfId.getId()))
                     return em.merge(meal);
                 else
                     return null;
