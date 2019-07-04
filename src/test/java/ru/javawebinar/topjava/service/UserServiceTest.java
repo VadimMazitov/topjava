@@ -1,7 +1,12 @@
 package ru.javawebinar.topjava.service;
 
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.rules.Stopwatch;
+import org.junit.runner.Description;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
 import org.slf4j.bridge.SLF4JBridgeHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -17,6 +22,7 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import static org.slf4j.LoggerFactory.getLogger;
 import static ru.javawebinar.topjava.UserTestData.*;
 
 @ContextConfiguration({
@@ -30,6 +36,30 @@ public class UserServiceTest {
     @Autowired
     private UserService service;
 
+    private final Logger log = getLogger(MealServiceTest.class);
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Rule
+    public Stopwatch stopwatch = new Stopwatch() {
+
+        @Override
+        protected void succeeded(long nanos, Description description) {
+            log.info(description.getMethodName(), "succeeded", nanos);
+        }
+
+        @Override
+        protected void failed(long nanos, Throwable e, Description description) {
+            log.info(description.getMethodName(), "failed", nanos);
+        }
+
+        @Override
+        protected void finished(long nanos, Description description) {
+            log.info(description.getMethodName(), "finished", nanos);
+        }
+    };
+
     @Test
     public void create() throws Exception {
         User newUser = new User(null, "New", "new@gmail.com", "newPass", 1555, false, new Date(), Collections.singleton(Role.ROLE_USER));
@@ -38,8 +68,9 @@ public class UserServiceTest {
         assertMatch(service.getAll(), ADMIN, newUser, USER);
     }
 
-    @Test(expected = DataAccessException.class)
-    public void duplicateMailCreate() throws Exception {
+    @Test
+    public void duplicateMailCreate() {
+        thrown.expect(DataAccessException.class);
         service.create(new User(null, "Duplicate", "user@yandex.ru", "newPass", Role.ROLE_USER));
     }
 
@@ -49,8 +80,9 @@ public class UserServiceTest {
         assertMatch(service.getAll(), ADMIN);
     }
 
-    @Test(expected = NotFoundException.class)
-    public void deletedNotFound() throws Exception {
+    @Test
+    public void deletedNotFound() {
+        thrown.expect(NotFoundException.class);
         service.delete(1);
     }
 
@@ -60,8 +92,9 @@ public class UserServiceTest {
         assertMatch(user, USER);
     }
 
-    @Test(expected = NotFoundException.class)
-    public void getNotFound() throws Exception {
+    @Test
+    public void getNotFound() {
+        thrown.expect(NotFoundException.class);
         service.get(1);
     }
 
