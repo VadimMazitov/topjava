@@ -1,17 +1,17 @@
 package ru.javawebinar.topjava.service;
 
-import org.junit.ClassRule;
+
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.junit.rules.ExternalResource;
+
 import org.junit.rules.Stopwatch;
-import org.junit.rules.TestRule;
+
 import org.junit.runner.Description;
 import org.junit.runner.RunWith;
-import org.junit.runners.model.Statement;
+
 import org.slf4j.Logger;
-import org.slf4j.bridge.SLF4JBridgeHandler;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.jdbc.Sql;
@@ -20,12 +20,12 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.util.exception.NotFoundException;
 
-import java.io.FileNotFoundException;
+
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+
 import java.time.Month;
 
-import static org.jsoup.nodes.Entities.EscapeMode.base;
+
 import static org.slf4j.LoggerFactory.getLogger;
 import static ru.javawebinar.topjava.MealTestData.*;
 import static ru.javawebinar.topjava.UserTestData.ADMIN_ID;

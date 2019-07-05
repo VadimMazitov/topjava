@@ -1,13 +1,11 @@
 package ru.javawebinar.topjava.repository.jpa;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.repository.MealRepository;
 
-import javax.jws.soap.SOAPBinding;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
@@ -26,22 +24,16 @@ public class JpaMealRepository implements MealRepository {
     @Transactional
     public Meal save(Meal meal, int userId) {
         User userOfId = em.getReference(User.class, userId);
-//        User userOfMeal = (User) em.createQuery("SELECT u FROM User u JOIN FETCH u.WHERE ").getSingleResult();
         meal.setUser(userOfId);
         if (userOfId != null) {
             if (meal.isNew()) {
                 em.persist(meal);
-                return meal;
             } else {
-                Meal mealToMerge = get(meal.getId(), userId);
-                User userOfMeal = mealToMerge != null ? mealToMerge.getUser() : null;
-                if (userOfMeal != null && userOfMeal.getId().equals(userOfId.getId()))
-                    return em.merge(meal);
-                else
-                    return null;
+                if (get(meal.getId(), userId) == null) return null;
+                em.merge(meal);
             }
         }
-        return null;
+        return meal;
     }
 
     @Override
