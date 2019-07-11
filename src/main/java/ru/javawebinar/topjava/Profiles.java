@@ -26,4 +26,9 @@ public class Profiles {
             }
         }
     }
+
+    public static String getActiveSpringProfile() {
+        final String activeProfile = System.getProperty("spring.profiles.active");
+        return activeProfile == null ? "jpa" : activeProfile;
+    }
 }
