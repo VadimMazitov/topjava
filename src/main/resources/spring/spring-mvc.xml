@@ -28,7 +28,7 @@
     <!--  all resources inside folder src/main/webapp/resources are mapped so they can be referred to inside JSP files -->
     <mvc:resources mapping="/resources/**" location="/resources/"/>
 
-<!--  all string in returns for @RequestMapping will be completed by foolowing suffix and prefix-->
+<!--  all string in returns for @RequestMapping will be completed by following suffix and prefix-->
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver"
           p:prefix="/WEB-INF/jsp/"
           p:suffix=".jsp"/>

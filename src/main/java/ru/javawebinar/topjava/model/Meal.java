@@ -1,5 +1,7 @@
 package ru.javawebinar.topjava.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Range;
@@ -50,11 +52,23 @@ public class Meal extends AbstractBaseEntity {
     public Meal() {
     }
 
+    public Meal(Meal meal) {
+        this.id = meal.getId();
+        this.description = meal.getDescription();
+        this.dateTime = meal.getDateTime();
+        this.calories = meal.getCalories();
+        this.user = meal.getUser();
+    }
+
     public Meal(LocalDateTime dateTime, String description, int calories) {
         this(null, dateTime, description, calories);
     }
 
-    public Meal(Integer id, LocalDateTime dateTime, String description, int calories) {
+    @JsonCreator
+    public Meal(@JsonProperty(value = "id", required = false) Integer id,
+                @JsonProperty(value = "dateTime", required = true)LocalDateTime dateTime,
+                @JsonProperty(value = "description", required = true) String description,
+                @JsonProperty(value = "calories", required = true) int calories) {
         super(id);
         this.dateTime = dateTime;
         this.description = description;
