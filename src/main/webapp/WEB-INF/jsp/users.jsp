@@ -17,7 +17,7 @@
             <span class="fa fa-plus"></span>
             <spring:message code="common.add"/>
         </button>
-        <table class="table table-striped" id="datatable">
+        <table class="table table-striped" id="users_datatable">
             <thead>
             <tr>
                 <th><spring:message code="user.name"/></th>
@@ -38,7 +38,7 @@
                     <td><input type="checkbox" <c:if test="${user.enabled}">checked</c:if> id="${user.id}"/></td>
                     <td><fmt:formatDate value="${user.registered}" pattern="dd-MMMM-yyyy"/></td>
                     <td><a><span class="fa fa-pencil"></span></a></td>
-                    <td><a class="delete" id="${user.id}"><span class="fa fa-remove"></span></a></td>
+                    <td><a class="delete" onclick="onDelete('${user.id}')"><span class="fa fa-remove"></span></a></td>
                 </tr>
             </c:forEach>
         </table>
