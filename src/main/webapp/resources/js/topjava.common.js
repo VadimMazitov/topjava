@@ -1,8 +1,9 @@
-let context, form;
+let context, formDetails, formFilter;
 
 function makeEditable(ctx) {
     context = ctx;
-    form = $('#detailsForm');
+    formDetails = $('#detailsForm');
+    formFilter = $('#filterForm');
     // $(".delete").click(function () {
     //     if (confirm('Are you sure?')) {
     //         deleteRow($(this).attr("id"));
@@ -20,7 +21,7 @@ function makeEditable(ctx) {
 
 
 function add() {
-    form.find(":input").val("");
+    formDetails.find(":input").val("");
     $("#editRow").modal();
 }
 
@@ -46,11 +47,32 @@ function updateTable() {
     });
 }
 
+function filter() {
+    let str = formFilter.serialize();
+    // $.get(context.ajaxUrl + 'filter?' + str, function (data) {
+    //     context.datatableApi.clear().rows.add(data).draw();
+    // });
+    $.ajax({
+        url: context.ajaxUrl + "filter?" + str,
+        type: "GET",
+    }).done(function (data) {
+        context.datatableApi.clear().rows.add(data).draw();
+        successNoty("Filtered")
+    });
+}
+
+function filterClear() {
+    // document.getElementById('filterForm').reset();
+    formFilter[0].reset();
+    updateTable();
+    successNoty("Filter cleared");
+}
+
 function save() {
     $.ajax({
         type: "POST",
         url: context.ajaxUrl,
-        data: form.serialize()
+        data: formDetails.serialize()
     }).done(function () {
         $("#editRow").modal("hide");
         updateTable();
