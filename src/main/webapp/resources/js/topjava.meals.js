@@ -1,3 +1,5 @@
+const mealAjaxURL = "ajax/profile/meals/";
+
 function updateFilteredTable() {
     $.ajax({
         type: "GET",
@@ -13,36 +15,58 @@ function clearFilter() {
 
 $(function () {
     makeEditable({
-        ajaxUrl: "ajax/profile/meals/",
-        datatableApi: $("#datatable").DataTable({
-            "paging": false,
-            "info": true,
-            "columns": [
-                {
-                    "data": "dateTime"
+            ajaxUrl: mealAjaxURL,
+            datatableApi: $("#datatable").DataTable({
+                "ajax": {
+                    "url": mealAjaxURL,
+                    "dataSrc": ""
                 },
-                {
-                    "data": "description"
-                },
-                {
-                    "data": "calories"
-                },
-                {
-                    "defaultContent": "Edit",
-                    "orderable": false
-                },
-                {
-                    "defaultContent": "Delete",
-                    "orderable": false
+                "paging": false,
+                "info": true,
+                "columns": [
+                    {
+                        "data": "dateTime",
+                        "render" : function (date, type, row) {
+                            if (type==="display") {
+                                var str = date.replace("T", " ");
+                                return str.substring(0, 16);
+                            }
+                            return date;
+                        }
+                    },
+                    {
+                        "data": "description"
+                    },
+                    {
+                        "data": "calories"
+                    },
+                    {
+                        "orderable": false,
+                        "defaultContent": "",
+                        "render": renderEditBtn
+                    },
+                    {
+                        "orderable": false,
+                        "defaultContent": "",
+                        "render": renderDeleteBtn
+                    }
+                ],
+                "order": [
+                    [
+                        0,
+                        "asc"
+                    ]
+                ],
+                "createdRow" : function (row, data, dataIndex) {
+                    // $(row).attr("color:blue");
+                    if (data.excess) {
+                        $(row).attr("data-mealExcess", true);
+                    } else {
+                        $(row).attr("data-mealExcess", false);
+                    }
                 }
-            ],
-            "order": [
-                [
-                    0,
-                    "desc"
-                ]
-            ]
-        }),
+            }),
         updateTable: updateFilteredTable
-    });
+        }
+    );
 });

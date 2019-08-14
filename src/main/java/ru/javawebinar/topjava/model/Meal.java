@@ -3,6 +3,7 @@ package ru.javawebinar.topjava.model;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 import org.hibernate.validator.constraints.Range;
+import ru.javawebinar.topjava.to.MealTo;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -49,6 +50,7 @@ public class Meal extends AbstractBaseEntity {
 
     public Meal() {
     }
+
 
     public Meal(LocalDateTime dateTime, String description, int calories) {
         this(null, dateTime, description, calories);
