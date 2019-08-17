@@ -61,6 +61,10 @@ public class ValidationUtil {
     }
 
     public static ResponseEntity<String> getErrorResponse(BindingResult result) {
+        return ResponseEntity.unprocessableEntity().body(getBindingResultMessage(result));
+    }
+
+    public static String getBindingResultMessage(BindingResult result) {
         StringJoiner joiner = new StringJoiner("<br>");
         result.getFieldErrors().forEach(
                 fe -> {
@@ -72,7 +76,7 @@ public class ValidationUtil {
                         joiner.add(msg);
                     }
                 });
-        return ResponseEntity.unprocessableEntity().body(joiner.toString());
+        return joiner.toString();
     }
 
     private static final Validator validator;
