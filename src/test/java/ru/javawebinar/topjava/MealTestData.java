@@ -31,8 +31,16 @@ public class MealTestData {
         return new Meal(null, of(2015, Month.JUNE, 1, 18, 0), "Созданный ужин", 300);
     }
 
+    public static Meal getInvalidCreated() {
+        return new Meal(null, of(2015, Month.JUNE, 1, 18, 0), "Созданный ужин невалидный", 7000);
+    }
+
     public static Meal getUpdated() {
         return new Meal(MEAL1_ID, MEAL1.getDateTime(), "Обновленный завтрак", 200);
+    }
+
+    public static Meal getInvalidUpdated() {
+        return new Meal(MEAL1_ID, MEAL1.getDateTime(), "Обновленный инвалидный", 7000);
     }
 
     public static void assertMatch(Meal actual, Meal expected) {

@@ -48,6 +48,13 @@ public class ExceptionInfoHandler {
     }
 
     @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)  // 422
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ResponseBody
+    public ErrorInfo restValidationError(HttpServletRequest req, MethodArgumentNotValidException e) {
+        return logAndGetErrorInfo(req, e, true, DATA_ERROR);
+    }
+
+    @ResponseStatus(value = HttpStatus.UNPROCESSABLE_ENTITY)  // 422
     @ExceptionHandler({IllegalRequestDataException.class, MethodArgumentTypeMismatchException.class, HttpMessageNotReadableException.class})
     public ErrorInfo illegalRequestDataError(HttpServletRequest req, Exception e) {
         return logAndGetErrorInfo(req, e, false, VALIDATION_ERROR);
@@ -67,9 +74,10 @@ public class ExceptionInfoHandler {
         } else {
             log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), rootCause.toString());
         }
-        if (e instanceof BindException) {
+        if (e instanceof BindException)
             return new ErrorInfo(req.getRequestURL(), errorType, ValidationUtil.getBindingResultMessage(((BindException) e).getBindingResult()));
-        }
+        if (e instanceof MethodArgumentNotValidException)
+            return new ErrorInfo(req.getRequestURL(), errorType, ValidationUtil.getBindingResultMessage(((MethodArgumentNotValidException) e).getBindingResult()));
         return new ErrorInfo(req.getRequestURL(), errorType, rootCause.toString());
     }
 }

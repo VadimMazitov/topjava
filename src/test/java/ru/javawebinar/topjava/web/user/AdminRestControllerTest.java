@@ -90,10 +90,23 @@ class AdminRestControllerTest extends AbstractControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .with(userHttpBasic(ADMIN))
                 .content(JsonUtil.writeValue(updated)))
+                .andDo(print())
                 .andExpect(status().isNoContent());
 
         assertMatch(userService.get(USER_ID), updated);
     }
+
+//    @Test
+//    void updateInvalid() throws Exception {
+//        User updatedInvalid = new User(USER);
+//        updatedInvalid.setPassword("");
+//        mockMvc.perform(MockMvcRequestBuilders.put(REST_URL + USER_ID)
+//                        .contentType(MediaType.APPLICATION_JSON)
+//                        .content(JsonUtil.writeValue(updatedInvalid))
+//                        .with(userHttpBasic(ADMIN)))
+//                        .andDo(print())
+//                        .andExpect(status().isUnprocessableEntity());
+//    }
 
     @Test
     void createWithLocation() throws Exception {
@@ -109,6 +122,16 @@ class AdminRestControllerTest extends AbstractControllerTest {
 
         assertMatch(returned, expected);
         assertMatch(userService.getAll(), ADMIN, expected, USER);
+    }
+
+    @Test
+    void createInvalidWithLocation() throws Exception {
+        User createdInvalid = new User(null, "New", "new@gmail.com", "",  2300, Role.ROLE_USER, Role.ROLE_ADMIN);
+        mockMvc.perform(MockMvcRequestBuilders.post(REST_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .with(userHttpBasic(ADMIN))
+                        .content(JsonUtil.writeValue(createdInvalid)))
+                        .andExpect(status().isUnprocessableEntity());
     }
 
     @Test
