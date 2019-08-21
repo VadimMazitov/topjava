@@ -72,4 +72,16 @@ abstract public class AbstractControllerTest {
             jpaUtil.clear2ndLevelHibernateCache();
         }
     }
+
+    private String getMessage(String code) {
+        return messageUtil.getMessage(code, MessageUtil.RU_LOCALE);
+    }
+
+    public ResultMatcher errorType(ErrorType type) {
+        return jsonPath("$.type").value(type.name());
+    }
+
+    public ResultMatcher detailMessage(String code) {
+        return jsonPath("$.details").value(getMessage(code));
+    }
 }
