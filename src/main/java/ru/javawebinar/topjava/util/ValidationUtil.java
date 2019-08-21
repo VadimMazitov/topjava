@@ -58,19 +58,8 @@ public class ValidationUtil {
         return result;
     }
 
-    public static ResponseEntity<String> getErrorResponse(BindingResult result) {
-        StringJoiner joiner = new StringJoiner("<br>");
-        result.getFieldErrors().forEach(
-                fe -> {
-                    String msg = fe.getDefaultMessage();
-                    if (msg != null) {
-                        if (!msg.startsWith(fe.getField())) {
-                            msg = fe.getField() + ' ' + msg;
-                        }
-                        joiner.add(msg);
-                    }
-                });
-        return ResponseEntity.unprocessableEntity().body(joiner.toString());
+    public static String getMessage(Throwable e) {
+        return e.getLocalizedMessage() != null ? e.getLocalizedMessage() : e.getClass().getName();
     }
 
     private static final Validator validator;
