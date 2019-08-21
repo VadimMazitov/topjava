@@ -4,10 +4,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import ru.javawebinar.topjava.View;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.to.MealTo;
 
-import javax.validation.Valid;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
