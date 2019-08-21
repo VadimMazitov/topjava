@@ -20,6 +20,8 @@ import ru.javawebinar.topjava.util.exception.NotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
 
+import java.sql.SQLException;
+
 import static ru.javawebinar.topjava.util.exception.ErrorType.*;
 
 @RestControllerAdvice(annotations = RestController.class)
@@ -73,6 +75,10 @@ public class ExceptionInfoHandler {
             log.error(errorType + " at request " + req.getRequestURL(), rootCause);
         } else {
             log.warn("{} at request  {}: {}", errorType, req.getRequestURL(), rootCause.toString());
+        }
+        if (rootCause instanceof SQLException) {
+            if (rootCause.toString().contains("users_unique_email_idx"))
+                return new ErrorInfo(req.getRequestURL(), errorType, "User with this email already exists");
         }
         if (e instanceof BindException)
             return new ErrorInfo(req.getRequestURL(), errorType, ValidationUtil.getBindingResultMessage(((BindException) e).getBindingResult()));

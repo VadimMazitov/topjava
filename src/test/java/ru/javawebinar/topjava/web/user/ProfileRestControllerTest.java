@@ -2,8 +2,11 @@ package ru.javawebinar.topjava.web.user;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import ru.javawebinar.topjava.model.User;
 import ru.javawebinar.topjava.to.UserTo;
 import ru.javawebinar.topjava.util.UserUtil;
@@ -16,6 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static ru.javawebinar.topjava.TestUtil.readFromJson;
 import static ru.javawebinar.topjava.TestUtil.userHttpBasic;
 import static ru.javawebinar.topjava.UserTestData.*;
+import static org.assertj.core.api.Assertions.assertThat;
 import static ru.javawebinar.topjava.web.user.ProfileRestController.REST_URL;
 
 class ProfileRestControllerTest extends AbstractControllerTest {
@@ -59,6 +63,19 @@ class ProfileRestControllerTest extends AbstractControllerTest {
 
         assertMatch(returned, created);
         assertMatch(userService.getByEmail("newemail@ya.ru"), created);
+    }
+
+    @Test
+    @Transactional(propagation = Propagation.NEVER)
+    void registerDuplicateEmail() throws Exception {
+        UserTo createdTo = new UserTo(null, "newName", "user@yandex.ru", "newPassword", 1500);
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post(REST_URL + "/register")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(JsonUtil.writeValue(createdTo)))
+                .andDo(print())
+                .andExpect(status().isConflict())
+                .andReturn();
+        assertThat(mvcResult.getResponse().getContentAsString()).containsIgnoringCase("User with this email already exists");
     }
 
     @Test

@@ -26,5 +26,20 @@
                 </button>
             </form:form>
         </sec:authorize>
+        <li class="nav-item dropdown">
+            <a class="dropdown-toggle nav-link my-1 ml-2" data-toggle="dropdown">ru</a>
+            <div class="dropdown-menu">
+                <a class="dropdown-item" onclick="show('en')">English</a>
+                <a class="dropdown-item" onclick="show('ru')">Русский</a>
+            </div>
+            <div>
+                Cuurent Locale : ${pageContext.response.locale}
+            </div>
+        </li>
+        <script>
+            function show(locale) {
+                window.location.href = window.location.href.split('?')[0] + '?lang=' + locale;
+            }
+        </script>
     </div>
 </nav>
