@@ -5,11 +5,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebElement;
-
-import java.io.File;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static ru.javawebinar.topjava.UserTestData.USER;

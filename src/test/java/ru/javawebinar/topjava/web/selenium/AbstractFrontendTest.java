@@ -18,7 +18,7 @@ import java.util.HashMap;
 abstract public class AbstractFrontendTest {
     private static final String PATH_TO_CHROME = "D:\\ChromeDriver\\chromedriver.exe";
 
-    public static WebDriver driver;
+    static WebDriver driver;
 
     private static final HashMap<String, Object> chromePrefs = new HashMap<>();
 
