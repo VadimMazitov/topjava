@@ -1,27 +1,25 @@
 package ru.javawebinar.topjava.web.selenium;
 
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebElement;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import java.io.File;
+
+import static org.junit.jupiter.api.Assertions.*;
 import static ru.javawebinar.topjava.UserTestData.USER;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class RootFrontendTest extends AbstractFrontendTest {
 
     @BeforeEach
     void initRoot() {
         driver.get(ROOT_URL);
-    }
-
-    @Test
-    void proxyDemo() throws Exception {
-
     }
 
     @Test
@@ -33,6 +31,7 @@ public class RootFrontendTest extends AbstractFrontendTest {
         localeRu.click();
         assertThat("Подсчет калорий").isEqualToIgnoringCase(driver.getTitle());
     }
+
 
     @Test
     void authorization() throws Exception {
@@ -50,7 +49,7 @@ public class RootFrontendTest extends AbstractFrontendTest {
     void toRegistration() throws Exception {
         WebElement registration = driver.findElement(By.id("registration"));
         registration.click();
-
+        Thread.sleep(5000);
         String id = driver.findElement(By.name("id")).getAttribute("value");
         String name = driver.findElement(By.name("name")).getAttribute("value");
         String email = driver.findElement(By.name("email")).getAttribute("value");

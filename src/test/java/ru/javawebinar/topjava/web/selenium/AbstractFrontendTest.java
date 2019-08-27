@@ -2,9 +2,7 @@ package ru.javawebinar.topjava.web.selenium;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -14,14 +12,13 @@ import ru.javawebinar.topjava.model.User;
 import java.io.File;
 import java.util.HashMap;
 
-import static ru.javawebinar.topjava.UserTestData.USER;
-
 @ExtendWith(TimingExtension.class)
+@ExtendWith(Screenshot.class)
 //@ActiveProfiles(resolver = AllActiveProfileResolver.class)
 abstract public class AbstractFrontendTest {
     private static final String PATH_TO_CHROME = "D:\\ChromeDriver\\chromedriver.exe";
 
-    protected static WebDriver driver;
+    public static WebDriver driver;
 
     private static final HashMap<String, Object> chromePrefs = new HashMap<>();
 
@@ -47,11 +44,7 @@ abstract public class AbstractFrontendTest {
     @BeforeEach
     void createDriver() throws Exception {
         driver = new ChromeDriver(service, options);
-    }
-
-    @AfterEach
-    void terminateDriver() throws Exception {
-        driver.quit();
+        driver.manage().window().maximize();
     }
 
     @AfterAll
