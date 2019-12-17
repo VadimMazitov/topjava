@@ -48,7 +48,6 @@ public class MealFrontendTest extends AbstractFrontendTest {
         dateTime.sendKeys(mealToSave.getDateTime().toString().replace('T', ' '));
         calories.sendKeys(String.valueOf(mealToSave.getCalories()));
 
-        fail();
         WebElement save = driver.findElement(By.id("save"));
         save.click();
         WebElement noty = wait.until(ExpectedConditions.presenceOfElementLocated(By.name("noty")));

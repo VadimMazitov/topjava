@@ -2,6 +2,8 @@ package ru.javawebinar.topjava;
 
 import org.springframework.test.context.ActiveProfilesResolver;
 
+import java.text.SimpleDateFormat;
+
 //http://stackoverflow.com/questions/23871255/spring-profiles-simple-example-of-activeprofilesresolver
 public class AllActiveProfileResolver implements ActiveProfilesResolver {
 

@@ -1,7 +1,5 @@
 package ru.javawebinar.topjava.web.selenium;
 
-import org.junit.jupiter.api.extension.AfterTestExecutionCallback;
-import org.junit.jupiter.api.extension.BeforeTestExecutionCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
 import org.junit.jupiter.api.extension.TestWatcher;
 import org.slf4j.Logger;
@@ -18,13 +16,11 @@ public class Screenshot implements TestWatcher {
 
     @Override
     public void testSuccessful(ExtensionContext context) {
-        System.out.println("onSuccess");
         driver.quit();
     }
 
     @Override
     public void testFailed(ExtensionContext context, Throwable cause) {
-        System.out.println("onFail");
         String name = context.getRequiredTestMethod().getName();
         String now = LocalDateTime.now().toString().substring(0, 16).replace(":","-");
         try {

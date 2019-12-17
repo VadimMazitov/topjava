@@ -6,11 +6,14 @@ import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
+import org.openqa.selenium.firefox.FirefoxProfile;
+import org.openqa.selenium.remote.service.DriverService;
 import ru.javawebinar.topjava.TimingExtension;
 import ru.javawebinar.topjava.model.User;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.Map;
 
 @ExtendWith(TimingExtension.class)
 @ExtendWith(Screenshot.class)
@@ -18,15 +21,15 @@ import java.util.HashMap;
 abstract public class AbstractFrontendTest {
     private static final String PATH_TO_CHROME = "D:\\ChromeDriver\\chromedriver.exe";
 
-    static WebDriver driver;
+    protected static WebDriver driver;
 
-    private static final HashMap<String, Object> chromePrefs = new HashMap<>();
+    private static final Map<String, Object> chromePrefs = new HashMap<>();
 
     private static ChromeOptions options = new ChromeOptions();
 
     private static final String LANGUAGE = "en";
 
-    private static ChromeDriverService service;
+    private static DriverService service;
 
     protected static final String ROOT_URL = "http://localhost:8080/topjava";
 
@@ -43,7 +46,7 @@ abstract public class AbstractFrontendTest {
 
     @BeforeEach
     void createDriver() throws Exception {
-        driver = new ChromeDriver(service, options);
+        driver = new ChromeDriver((ChromeDriverService) service, options);
         driver.manage().window().maximize();
     }
 

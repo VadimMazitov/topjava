@@ -1,6 +1,5 @@
 package ru.javawebinar.topjava.web.selenium;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +24,7 @@ public class RootFrontendTest extends AbstractFrontendTest {
         WebElement localeRu = driver.findElement(By.id("locale_ru"));
         locale.click();
         localeRu.click();
-        assertThat("Подсчет калорий").isEqualToIgnoringCase(driver.getTitle());
+        assertThat("qweryuqwe").isEqualToIgnoringCase(driver.getTitle());
     }
 
 
@@ -45,7 +44,6 @@ public class RootFrontendTest extends AbstractFrontendTest {
     void toRegistration() throws Exception {
         WebElement registration = driver.findElement(By.id("registration"));
         registration.click();
-        Thread.sleep(5000);
         String id = driver.findElement(By.name("id")).getAttribute("value");
         String name = driver.findElement(By.name("name")).getAttribute("value");
         String email = driver.findElement(By.name("email")).getAttribute("value");
